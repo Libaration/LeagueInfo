@@ -1,9 +1,25 @@
+require 'pry'
 class LeagueInfo::Champions
+  attr_accessor :key, :name, :blurb, :version, :info, :id, :title, :image, :tags, :partype, :stats
   @@all = []
   def initialize
-    #todo init new champs from json
     @@all << self
   end
+
+
+  def self.load_champions
+    data = Getdata.new
+    champlist = data.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json')[:data]
+    champlist.each do |_key, value|
+      champion = self.new
+      value.each_pair { |k, v| champion.send("#{k}=", v)}
+    end
+  end
+
+  def self.find_by_name(name)
+    all.detect { |champion| champion.name == name }
+  end
+
 
   def self.all
     @@all
