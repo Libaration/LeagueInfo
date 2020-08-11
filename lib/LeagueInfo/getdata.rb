@@ -3,7 +3,7 @@ require 'json'
 require 'net/http'
 
 class LeagueInfo::Getdata
-  #attr_reader :APIKEY
+  attr_reader :APIKEY
   APIKEY = 'RGAPI-c22d83c0-485c-4821-a4ab-4420284bf4f8'.freeze
   def get(url)
     uri = URI.parse(url)
@@ -11,7 +11,7 @@ class LeagueInfo::Getdata
     JSON.parse(response.body, { symbolize_names: true })
   end
 
-  def self.apikey
+  def self.APIKEY
     APIKEY
   end
 end
