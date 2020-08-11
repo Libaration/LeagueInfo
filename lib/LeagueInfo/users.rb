@@ -3,7 +3,7 @@ class LeagueInfo::Users
   @@current
   attr_accessor :id, :accountId, :puuid, :name, :profileIconId, :revisionDate, :summonerLevel, :matches
   def initialize
-    @matches = []
+
   end
 
   def current_user(nameArg)

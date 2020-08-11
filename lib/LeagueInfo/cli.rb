@@ -137,6 +137,8 @@ class LeagueInfo::CLI
 
   def matches
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current)
+    pp LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
+    start
   end
 
   def goodbye
