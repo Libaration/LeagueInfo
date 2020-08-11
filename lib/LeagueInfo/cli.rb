@@ -95,7 +95,7 @@ class LeagueInfo::CLI
 
   def find_user
     prompt = TTY::Prompt.new(active_color: :blue)
-    user = prompt.ask('Enter your league username:', default: "TSM Bjergsen")
+    user = prompt.ask('Enter your league username:', default: "Faker")
     user = URI.escape user
     unsavedUser = LeagueInfo::Users.get_user(user)
     ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}
@@ -136,10 +136,13 @@ class LeagueInfo::CLI
   end
 
   def matches
+    totalGames = 0 ; wonGames = 0
+    prompt = TTY::Prompt.new(active_color: :blue)
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current)
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
     rows = []
     matchobjects.each_with_index do |obj, i|
+      result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
       if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i].values.join()) == nil
         championname = 'Not in database'
@@ -147,12 +150,28 @@ class LeagueInfo::CLI
         championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i].values.join()).name
       end
 
-      rows << ["#{championname}", "#{outcome}", "#{obj.teams[0][0][:towerKills]}".green + ' / ' + "#{obj.teams[0][1][:towerKills]}".red]
-      #obj.champsPlayed[1].values.first
+      rows << [result == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{obj.teams[0][0][:towerKills]}".green + ' / ' + "#{obj.teams[0][1][:towerKills]}".red]
+      totalGames += 1
+      wonGames += 1 if result == 'Win'
     end
-    table = Terminal::Table.new :rows => rows, :headings => ['Champion', 'Result'.yellow, 'Turrets Taken'.yellow]
-    table.style = {:width => 80, :padding_left => 3, :border_x => "=".blue, :border_i => "x", :all_separators => true}
+    table = Terminal::Table.new :rows => rows, :headings => ['Champion'.blue, 'Result'.blue, 'Turrets Taken'.blue]
+    table.style = {:width => 80, :padding_left => 3, :border_x => "=".blue, :border_i => "x", :all_separators => false}
     puts table
+    winPercent = wonGames.to_f / totalGames * 100
+    if winPercent > 50
+      puts "       #{LeagueInfo::Users.current.name} is at a ".blue + "%#{winPercent.to_i}".green + " win rate in the last #{totalGames} games".blue
+    else
+      puts "       #{LeagueInfo::Users.current.name} is at a ".blue + "%#{winPercent.to_i}".red + " win rate in the last #{totalGames} games".blue
+    end
+    navkey = prompt.keypress("Press M to go back to the main menu. Press ESC to exit".yellow)
+    case navkey
+    when 'm'
+      start
+    when "\e"
+      goodbye
+    when "\r"
+      start
+    end
   end
 
 

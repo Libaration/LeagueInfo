@@ -21,7 +21,7 @@ class LeagueInfo::Matches
     matchData = []
     data = LeagueInfo::Getdata.new
     #LeagueInfo::Users.current.matches << data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?api_key=#{LeagueInfo::Getdata.APIKEY}")
-    matches = data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=2&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
+    matches = data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
     matches.each do |k|
       k.each { |key, value| matchIds << {key => value} if key == :gameId}
       k.each { |key, value| champsPlayed << {key => value} if key == :champion}
