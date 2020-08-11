@@ -93,9 +93,14 @@ class LeagueInfo::CLI
     when 'm'
       start
     when 's'
-      unsavedUser.save
-      LeagueInfo::Users.current = unsavedUser
-      account_switcher
+      if LeagueInfo::Users.exists?(unsavedUser)
+        puts 'User already exists'.red
+        account_switcher
+      else
+        unsavedUser.save
+        LeagueInfo::Users.current = unsavedUser
+        account_switcher
+      end
     end
   end
 
@@ -120,7 +125,7 @@ class LeagueInfo::CLI
   end
 
   def matches
-
+    LeagueInfo::Matches.get_matches(LeagueInfo::Users.current)
   end
 
   def goodbye

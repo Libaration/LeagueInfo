@@ -1,9 +1,9 @@
 class LeagueInfo::Users
   @@all = []
   @@current
-  attr_accessor :id, :accountId, :puuid, :name, :profileIconId, :revisionDate, :summonerLevel
+  attr_accessor :id, :accountId, :puuid, :name, :profileIconId, :revisionDate, :summonerLevel, :matches
   def initialize
-
+    @matches = []
   end
 
   def current_user(nameArg)
@@ -28,6 +28,14 @@ class LeagueInfo::Users
 
   def self.all
     @@all
+  end
+
+  def self.exists?(name)
+    all_by_name.include?(name.name) ? true:false
+  end
+
+  def self.all_by_name
+    all.collect{ |user| user.name }
   end
 
   def self.current
