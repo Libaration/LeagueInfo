@@ -1,6 +1,7 @@
 require 'colorize'
 require 'tty-prompt'
 require 'pry'
+require 'terminal-table'
 class LeagueInfo::CLI
   prompt = TTY::Prompt.new
   def splash
@@ -54,11 +55,19 @@ class LeagueInfo::CLI
   def attributes(champion)
     puts "#{champion.img}".light_blue
     prompt = TTY::Prompt.new(active_color: :blue)
-    choices = %w(Key Blurb Tags)
+    choices = %w(Key Blurb Tags Stats)
     champattr = prompt.multi_select("Which attributes do you want to find out about?", choices)
     champattr.each do |attr|
       puts "#{attr}: ".red + champion.send(attr.downcase).join('/').blue if attr == 'Tags'
-      puts "#{attr}: ".red + champion.send(attr.downcase).blue unless attr == 'Tags'
+      puts "#{attr}: ".red + champion.send(attr.downcase).blue unless attr == 'Tags' || attr == 'Stats'
+      rows = []
+      if attr == 'Stats'
+        champion.send(attr.downcase).collect do |k, v,|
+        rows << ["#{k}".red, "#{v}".blue]
+        end
+      end
+      table = Terminal::Table.new :rows => rows
+      puts table
     end
     navkey = prompt.keypress("Press 'M' to return to main menu Press 'C' to return to champion selection or just press 'ESC' to exit".yellow)
     case navkey
@@ -87,7 +96,7 @@ class LeagueInfo::CLI
     user = prompt.ask('Enter your league username:', default: "TSM Bjergsen")
     user = URI.escape user
     unsavedUser = LeagueInfo::Users.get_user(user)
-    ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel'].each{|var| print "#{var}: " ; puts unsavedUser.send("#{var}")}
+    ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}
     navkey = prompt.keypress("Press S to save this account or press M to not save and go back to the main menu".yellow)
     case navkey
     when 'm'
