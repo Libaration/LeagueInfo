@@ -53,7 +53,7 @@ class LeagueInfo::CLI
   end
 
   def attributes(champion)
-    puts "#{champion.img}".light_blue
+    puts "#{champion.img}".light_blue ; puts "                                                   #{champion.title}".light_blue
     prompt = TTY::Prompt.new(active_color: :blue)
     choices = %w(Key Blurb Tags Stats)
     champattr = prompt.multi_select("Which attributes do you want to find out about?", choices)
@@ -63,11 +63,13 @@ class LeagueInfo::CLI
       rows = []
       if attr == 'Stats'
         champion.send(attr.downcase).collect do |k, v,|
-        rows << ["#{k}".red, "#{v}".blue]
+        rows << ["#{k.capitalize}".red, "#{v}".blue]
         end
       end
-      table = Terminal::Table.new :rows => rows
-      puts table
+      table = Terminal::Table.new :rows => rows, :headings => ['Stat', 'Value']
+      table.align_column(1, :right)
+      table.style = {:width => 50, :padding_left => 3, :border_x => "=", :border_i => "x", :all_separators => false}
+      puts table  if attr == 'Stats'
     end
     navkey = prompt.keypress("Press 'M' to return to main menu Press 'C' to return to champion selection or just press 'ESC' to exit".yellow)
     case navkey
