@@ -10,6 +10,10 @@ class LeagueInfo::Champions
     LeagueInfo::Champimg.load(self.name)
   end
 
+  def self.find_by_id(id)
+    all.detect { |champion| champion.key == id}
+  end
+
   def self.load_champions
     data = LeagueInfo::Getdata.new
     champlist = data.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json')[:data]

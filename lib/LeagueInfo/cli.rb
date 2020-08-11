@@ -137,9 +137,24 @@ class LeagueInfo::CLI
 
   def matches
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current)
-    pp LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
-    start
+    matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
+    rows = []
+    matchobjects.each_with_index do |obj, i|
+      obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
+      if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i].values.join()) == nil
+        championname = 'Not in database'
+      else
+        championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i].values.join()).name
+      end
+
+      rows << ["#{championname}", "#{outcome}", "#{obj.teams[0][0][:towerKills]}".green + ' / ' + "#{obj.teams[0][1][:towerKills]}".red]
+      #obj.champsPlayed[1].values.first
+    end
+    table = Terminal::Table.new :rows => rows, :headings => ['Champion', 'Result'.yellow, 'Turrets Taken'.yellow]
+    table.style = {:width => 80, :padding_left => 3, :border_x => "=".blue, :border_i => "x", :all_separators => true}
+    puts table
   end
+
 
   def goodbye
     puts 'See you soon!'.blue
