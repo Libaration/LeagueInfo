@@ -24,4 +24,15 @@ class LeagueInfo::Getdata
     users.each { |name| usersCollected << name.text}
     usersCollected.sample
   end
+
+  def self.scrape_kda(name)
+    name = URI.escape name
+    url = "https://lolprofile.net/summoner/na/#{name}"
+    doc = Nokogiri::HTML(open(url))
+    rows = doc.css("div.s-rg")
+    kda = rows.css("span.kda.victory-text1")
+    kdaArray = Array.new.tap do |array|
+      kda.each{|thing| array << thing.text.gsub(/\s+/, "").split("/")}
+    end
+  end
 end

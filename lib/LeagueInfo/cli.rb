@@ -146,6 +146,7 @@ class LeagueInfo::CLI
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
     rows = []
     matchobjects.each_with_index do |obj, i|
+      kda = LeagueInfo::Getdata.scrape_kda(LeagueInfo::Users.current.name)[i]
       result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
       if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]) == nil
@@ -154,11 +155,11 @@ class LeagueInfo::CLI
         championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]).name
       end
 
-      rows << [result == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{obj.teams[0][0][:towerKills]}".green + ' / ' + "#{obj.teams[0][1][:towerKills]}".red]
+      rows << [result == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{kda[0]}".green + " / " + "#{kda[1]}".red + " / " + "#{kda[2]}"]
       totalGames += 1
       wonGames += 1 if result == 'Win'
     end
-    table = Terminal::Table.new :rows => rows, :headings => ['Champion'.blue, 'Result'.blue, 'Turrets Taken'.blue]
+    table = Terminal::Table.new :rows => rows, :headings => ['Champion'.blue, 'Result'.blue, 'K / D / A'.blue]
     table.style = {:width => 80, :padding_left => 3, :border_x => "=".blue, :border_i => "x", :all_separators => false}
     puts table
     winPercent = wonGames.to_f / totalGames * 100
@@ -192,6 +193,7 @@ class LeagueInfo::CLI
       puts "Most played champion: Not in database (New Champion)"
     end
 
+    start
   end
 
   def goodbye
