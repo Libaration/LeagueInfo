@@ -95,7 +95,8 @@ class LeagueInfo::CLI
 
   def find_user
     prompt = TTY::Prompt.new(active_color: :blue)
-    user = prompt.ask('Enter your league username:', default: "Faker")
+    user = prompt.ask('Enter your league username:', default: "Press Return for Random summoner")
+    user = LeagueInfo::Getdata.get_random if user == 'Press Return for Random summoner'
     user = URI.escape user
     unsavedUser = LeagueInfo::Users.get_user(user)
     ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}

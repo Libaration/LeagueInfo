@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'json'
 require 'net/http'
+require 'nokogiri'
 
 class LeagueInfo::Getdata
   attr_reader :APIKEY
@@ -13,5 +14,14 @@ class LeagueInfo::Getdata
 
   def self.APIKEY
     APIKEY
+  end
+
+  def self.get_random
+    usersCollected = []
+    url = 'https://www.leagueofgraphs.com/rankings/summoners/na'
+    doc = Nokogiri::HTML(open(url))
+    users = doc.css("span.name")
+    users.each { |name| usersCollected << name.text}
+    usersCollected.sample
   end
 end
