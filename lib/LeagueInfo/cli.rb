@@ -29,13 +29,14 @@ class LeagueInfo::CLI
       choices = [
           { name:'Find a Champion', value:'Find a Champion'},
           { name:'Find a User', value:'Find a User' },
-          { name:'My Matches', value:'My Matches', disabled: "(No accounts saved)" }
+          { name:'Match History', value:'My Matches', disabled: "(No accounts saved)" }
       ]
       else
       choices = [
           { name:'Find a Champion', value:'Find a Champion'},
           { name:'Find a User', value:'Find a User' },
-          { name:'My Matches', value:'My Matches'},
+          { name:'Match History', value:'My Matches'},
+          { name:'Stats', value:'Stats'},
           { name:'Account Switcher', value:'Account Switcher'}
       ]
     end
@@ -47,6 +48,8 @@ class LeagueInfo::CLI
       find_user
     when 'My Matches'
       matches
+    when 'Stats'
+      user_stats
     when 'Account Switcher'
       account_switcher
     end
@@ -139,16 +142,16 @@ class LeagueInfo::CLI
   def matches
     totalGames = 0 ; wonGames = 0
     prompt = TTY::Prompt.new(active_color: :blue)
-    LeagueInfo::Matches.get_matches(LeagueInfo::Users.current)
+    LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false # not the cleanest way to do this
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
     rows = []
     matchobjects.each_with_index do |obj, i|
       result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
-      if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i].values.join()) == nil
+      if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]) == nil
         championname = 'Not in database'
       else
-        championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i].values.join()).name
+        championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]).name
       end
 
       rows << [result == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{obj.teams[0][0][:towerKills]}".green + ' / ' + "#{obj.teams[0][1][:towerKills]}".red]
@@ -175,6 +178,21 @@ class LeagueInfo::CLI
     end
   end
 
+  def user_stats
+    LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false
+    matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
+    champFrequency = {}
+    matchobjects.each do |match|
+      match.champsPlayed
+      match.champsPlayed.collect {|champid| champFrequency[champid.to_sym] = match.champsPlayed.count(champid) }
+    end
+    if LeagueInfo::Champions.valid?(champFrequency.key(champFrequency.values.max).to_s) == true
+      puts "Most played champion: ".blue + "#{LeagueInfo::Champions.find_by_id(champFrequency.key(champFrequency.values.max).to_s).name}"
+    else
+      puts "Most played champion: Not in database (New Champion)"
+    end
+
+  end
 
   def goodbye
     puts 'See you soon!'.blue

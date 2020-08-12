@@ -10,6 +10,10 @@ class LeagueInfo::Champions
     LeagueInfo::Champimg.load(self.name)
   end
 
+  def self.valid?(id)
+    all.any? {|champion| champion.key.include?(id)} ? true : false
+  end
+
   def self.find_by_id(id)
     all.detect { |champion| champion.key == id}
   end
