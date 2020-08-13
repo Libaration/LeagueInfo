@@ -5,6 +5,7 @@ require './lib/LeagueInfo/getdata'
 require './lib/LeagueInfo/champimg'
 require './lib/LeagueInfo/users'
 require './lib/LeagueInfo/matches'
+require './lib/LeagueInfo/stats'
 
 module LeagueInfo
   class Error < StandardError; end

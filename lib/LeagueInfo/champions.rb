@@ -1,6 +1,6 @@
 require 'pry'
 class LeagueInfo::Champions
-  attr_accessor :key, :name, :blurb, :version, :info, :id, :title, :image, :tags, :partype, :stats, :img
+  attr_accessor :key, :name, :blurb, :version, :info, :id, :title, :image, :tags, :partype, :stats
   @@all = []
   def initialize
     @@all << self
@@ -29,6 +29,10 @@ class LeagueInfo::Champions
 
   def self.find_by_name(name)
     all.detect { |champion| champion.name == name }
+  end
+
+  def winratio
+    # stats call
   end
 
 

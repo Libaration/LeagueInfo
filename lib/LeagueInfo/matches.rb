@@ -30,7 +30,7 @@ class LeagueInfo::Matches
     matchData = []
     data = LeagueInfo::Getdata.new
     #LeagueInfo::Users.current.matches << data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?api_key=#{LeagueInfo::Getdata.APIKEY}")
-    matches = data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=8&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
+    matches = data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
     puts ' Iterating through match data: '.green
     bar = TTY::ProgressBar.new(" [:bar]".green , total: matches.count, width: 77) # total is the count of matches progress is advanced inside loop below by each iteration
     matches.each do |k|
@@ -44,7 +44,6 @@ class LeagueInfo::Matches
       matchData << matchHistory # push match data from current iteration into an array
         bar.advance(1)
     end
-    puts ' Scraping external data'.green # put this here because a progress bar inside of the scrape method kept being iterated causing them to be printed multiple times
     createMatches(matchData, champsPlayed)
   end
 

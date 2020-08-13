@@ -145,8 +145,8 @@ class LeagueInfo::CLI
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false # not the cleanest way to do this
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
     rows = []
+    kdaArray = LeagueInfo::Stats.scrape_kda(LeagueInfo::Users.current.name)
     matchobjects.each_with_index do |obj, i|
-      kda = LeagueInfo::Getdata.scrape_kda(LeagueInfo::Users.current.name)[i]
       result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
       if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]) == nil
@@ -155,7 +155,7 @@ class LeagueInfo::CLI
         championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]).name
       end
 
-      rows << [result == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{kda[0]}".green + " / " + "#{kda[1]}".red + " / " + "#{kda[2]}"]
+      rows << [result == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{kdaArray[i][0]}".green + " / " + "#{kdaArray[i][1]}".red + " / " + "#{kdaArray[i][2]}"]
       totalGames += 1
       wonGames += 1 if result == 'Win'
     end
