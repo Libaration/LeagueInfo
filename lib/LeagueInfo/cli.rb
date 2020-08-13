@@ -145,7 +145,7 @@ class LeagueInfo::CLI
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false # not the cleanest way to do this
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
     rows = []
-    kdaArray = LeagueInfo::Stats.scrape_kda(LeagueInfo::Users.current.name)
+    kdaArray = LeagueInfo::Matches.scrape_kda(LeagueInfo::Users.current.name)
     matchobjects.each_with_index do |obj, i|
       result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
@@ -181,18 +181,7 @@ class LeagueInfo::CLI
 
   def user_stats
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false
-    matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
-    champFrequency = {}
-    matchobjects.each do |match|
-      match.champsPlayed
-      match.champsPlayed.collect {|champid| champFrequency[champid.to_sym] = match.champsPlayed.count(champid) }
-    end
-    if LeagueInfo::Champions.valid?(champFrequency.key(champFrequency.values.max).to_s) == true
-      puts "Most played champion: ".blue + "#{LeagueInfo::Champions.find_by_id(champFrequency.key(champFrequency.values.max).to_s).name}"
-    else
-      puts "Most played champion: Not in database (New Champion)"
-    end
-
+    LeagueInfo::Matches.most_played
     start
   end
 
