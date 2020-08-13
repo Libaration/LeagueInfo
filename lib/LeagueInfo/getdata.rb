@@ -2,10 +2,12 @@ require 'open-uri'
 require 'json'
 require 'net/http'
 require 'nokogiri'
+require 'pry'
+require 'dotenv'
+Dotenv.load
 
 class LeagueInfo::Getdata
-  attr_reader :APIKEY
-  APIKEY = 'RGAPI-c22d83c0-485c-4821-a4ab-4420284bf4f8'.freeze
+  APIKEY = ENV["APIKEY"]
   def get(url)
     uri = URI.parse(url)
     response = Net::HTTP.get_response(uri)

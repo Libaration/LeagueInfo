@@ -33,6 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rake', '~> 12.0'
   spec.add_dependency 'terminal-table', '~> 1.8'
   spec.add_dependency 'tty-progressbar', '~> 0.17.0'
-  spec.add_dependency 'tty-prompt', '~> 0.22.0'
-  spec.add_dependency 'tty-table', '~> 0.11.0'
+  spec.add_dependency 'tty-prompt'
+  spec.add_dependency 'tty-table'
 end
