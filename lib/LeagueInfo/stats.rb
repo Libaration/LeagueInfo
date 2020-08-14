@@ -1,4 +1,0 @@
-class LeagueInfo::Stats
-
-
-end

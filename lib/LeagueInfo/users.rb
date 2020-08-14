@@ -1,7 +1,7 @@
 class LeagueInfo::Users
   @@all = []
   @@current
-  attr_accessor :id, :accountId, :puuid, :name, :profileIconId, :revisionDate, :summonerLevel, :matches
+  attr_accessor :id, :accountId, :puuid, :name, :profileIconId, :revisionDate, :summonerLevel, :matches, :rank
   def initialize
 
   end
@@ -22,8 +22,15 @@ class LeagueInfo::Users
     data = LeagueInfo::Getdata.new
     userdetails = data.get("https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{name}?api_key=#{LeagueInfo::Getdata.APIKEY}")
     new = self.new
+    new.rank = scrape_rank(name)
     userdetails.each{ |k,v| new.send("#{k}=", v) }
     new
+  end
+
+  def self.scrape_rank(name)
+    url = "https://na.op.gg/summoner/userName=#{name}"
+    doc = Nokogiri::HTML(open(url))
+    doc.css("div.TierRank").text
   end
 
   def self.all

@@ -29,7 +29,6 @@ class LeagueInfo::Matches
     champsPlayed = []
     matchData = []
     data = LeagueInfo::Getdata.new
-    #LeagueInfo::Users.current.matches << data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?api_key=#{LeagueInfo::Getdata.APIKEY}")
     matches = data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
     puts ' Iterating through match data: '.green
     bar = TTY::ProgressBar.new(" [:bar]".green , total: matches.count, width: 77) # total is the count of matches progress is advanced inside loop below by each iteration
@@ -70,9 +69,9 @@ class LeagueInfo::Matches
       match.champsPlayed.collect {|champid| champFrequency[champid.to_sym] = match.champsPlayed.count(champid) }
     end
     if LeagueInfo::Champions.valid?(champFrequency.key(champFrequency.values.max).to_s) == true
-      puts "Most played champion: ".blue + "#{LeagueInfo::Champions.find_by_id(champFrequency.key(champFrequency.values.max).to_s).name}"
+      puts "          Most played champion: ".blue + "#{LeagueInfo::Champions.find_by_id(champFrequency.key(champFrequency.values.max).to_s).name}"
     else
-      puts "Most played champion: Not in database (New Champion)"
+      puts "          Most played champion: Not in database (New Champion)"
     end
   end
 

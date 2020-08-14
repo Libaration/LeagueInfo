@@ -36,7 +36,6 @@ class LeagueInfo::CLI
           { name:'Find a Champion', value:'Find a Champion'},
           { name:'Find a User', value:'Find a User' },
           { name:'Match History', value:'My Matches'},
-          { name:'Stats', value:'Stats'},
           { name:'Account Switcher', value:'Account Switcher'}
       ]
     end
@@ -48,8 +47,6 @@ class LeagueInfo::CLI
       find_user
     when 'My Matches'
       matches
-    when 'Stats'
-      user_stats
     when 'Account Switcher'
       account_switcher
     end
@@ -168,6 +165,7 @@ class LeagueInfo::CLI
     else
       puts "       #{LeagueInfo::Users.current.name} is at a ".blue + "%#{winPercent.to_i}".red + " win rate in the last #{totalGames} games".blue
     end
+      puts "#{LeagueInfo::Matches.most_played}".blue
     navkey = prompt.keypress("Press M to go back to the main menu. Press ESC to exit".yellow)
     case navkey
     when 'm'
@@ -177,12 +175,6 @@ class LeagueInfo::CLI
     when "\r"
       start
     end
-  end
-
-  def user_stats
-    LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false
-    LeagueInfo::Matches.most_played
-    start
   end
 
   def goodbye
