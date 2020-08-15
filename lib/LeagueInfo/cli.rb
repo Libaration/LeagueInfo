@@ -52,7 +52,7 @@ class LeagueInfo::CLI
   end
 
   def attributes(champion)
-    puts "#{champion.img}".light_blue ; puts "                                                   #{champion.title}".light_blue
+    champion.img
     prompt = TTY::Prompt.new(active_color: :blue)
     choices = %w(Key Blurb Tags Stats)
     champattr = prompt.multi_select("Which attributes do you want to find out about?", choices)

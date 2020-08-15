@@ -8,7 +8,8 @@ class LeagueInfo::Champions
 
   def img
     doc = LeagueInfo::Getdata.scrapeData("http://www.asciiarts.net/figlet.ajax.php?message=#{self.name}&font=isometric4.flf&html_mode=undefined&facebook_mode=undefined")
-    doc.css("div#image").children[1].text
+    image = doc.css("div#image").children[1].text
+    puts "#{image}".light_blue ; puts "                                                   #{self.title}".light_blue
   end
 
   def self.valid?(id)
