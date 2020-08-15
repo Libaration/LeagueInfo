@@ -103,7 +103,7 @@ class LeagueInfo::CLI
     user = LeagueInfo::Getdata.get_random if user == 'Press Return for Random summoner'
     user = URI.escape user
     unsavedUser = LeagueInfo::Users.get_user(user)
-    ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}
+    ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel', 'rank'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}
     navkey = prompt.keypress("Press S to save this account or press M to not save and go back to the main menu".yellow)
     case navkey
     when 'm'
