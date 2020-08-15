@@ -23,10 +23,10 @@ class LeagueInfo::Getdata
   end
 
   def self.get_random
-    usersCollected = []
-    doc = scrapeData('https://www.leagueofgraphs.com/rankings/summoners/na')
-    users = doc.css("span.name")
-    users.each { |name| usersCollected << name.text}
+    usersCollected = Array.new.tap do |array|
+      users = scrapeData('https://www.leagueofgraphs.com/rankings/summoners/na').css("span.name")
+      users.each { |name| array << name.text}
+    end
     usersCollected.sample
   end
 end
