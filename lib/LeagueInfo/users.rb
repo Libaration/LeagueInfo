@@ -6,10 +6,6 @@ class LeagueInfo::Users
 
   end
 
-  def current_user(nameArg)
-    @@current = all.detect{|user| user.name == nameArg} #set current user
-  end
-
   def save
     self.class.all << self
   end

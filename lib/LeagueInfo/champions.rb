@@ -33,11 +33,6 @@ class LeagueInfo::Champions
     all.detect { |champion| champion.name == name }
   end
 
-  def winratio
-    # stats call
-  end
-
-
   def self.all
     @@all
   end
