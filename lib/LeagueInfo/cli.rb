@@ -60,14 +60,15 @@ class LeagueInfo::CLI
       puts 'Please make a selection!'.red
       sleep(1)
       attributes(champion)
-    end
+      else
     champattr.each do |attr|
       puts "#{attr}: ".red + champion.send(attr.downcase).join('/').blue if attr == 'Tags'
       puts "#{attr}: ".red + champion.send(attr.downcase).blue unless attr == 'Tags' || attr == 'Stats'
-      rows = []
-      if attr == 'Stats'
-        champion.send(attr.downcase).collect do |k, v,|
-        rows << ["#{k.capitalize}".red, "#{v}".blue]
+      rows = Array.new.tap do |row|
+        if attr == 'Stats'
+          champion.send(attr.downcase).collect do |k, v,| #calls on instance stats variable which is a hash
+            row << ["#{k.capitalize}".red, "#{v}".blue]
+          end
         end
       end
       table = Terminal::Table.new :rows => rows, :headings => ['Stat', 'Value']
@@ -85,6 +86,7 @@ class LeagueInfo::CLI
       goodbye
     when "\r"
       start
+    end
     end
   end
 
