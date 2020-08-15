@@ -8,7 +8,7 @@ Dotenv.load
 
 class LeagueInfo::Getdata
   APIKEY = ENV["APIKEY"]
-  def get(url)
+  def self.get(url)
     uri = URI.parse(url)
     response = Net::HTTP.get_response(uri)
     JSON.parse(response.body, { symbolize_names: true })

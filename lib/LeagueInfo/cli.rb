@@ -145,8 +145,8 @@ class LeagueInfo::CLI
     prompt = TTY::Prompt.new(active_color: :blue)
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false # not the cleanest way to do this
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
-    rows = []
     kdaArray = LeagueInfo::Matches.scrape_kda(LeagueInfo::Users.current.name)
+    rows = []
     matchobjects.each_with_index do |obj, i|
       result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red

@@ -13,11 +13,11 @@ class LeagueInfo::Matches
   end
 
   def champsPlayed
-    champsPlayedArray = []
-    @champsPlayed.each do |champid|
-      champsPlayedArray << champid.values.first.to_s
+    champsPlayedArray = Array.new.tap do |array|
+      @champsPlayed.each do |champid|
+        array << champid.values.first.to_s
+      end
     end
-    champsPlayedArray
   end
 
   def self.all
@@ -28,8 +28,7 @@ class LeagueInfo::Matches
     matchIds = []
     champsPlayed = []
     matchData = []
-    data = LeagueInfo::Getdata.new
-    matches = data.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
+    matches = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
     puts ' Iterating through match data: '.green
     bar = TTY::ProgressBar.new(" [:bar]".green , total: matches.count, width: 77) # total is the count of matches progress is advanced inside loop below by each iteration
     matches.each do |k|
@@ -38,7 +37,7 @@ class LeagueInfo::Matches
     end
     matchIds.each_with_index do |_ , i| # this loop iterates through each gameId and sets it to the currentGameId
       currentGameId = matchIds[i].values.join()
-      matchHistory = data.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{currentGameId}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams] # pulls match data depending on current gameId
+      matchHistory = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{currentGameId}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams] # pulls match data depending on current gameId
       return 'No matches!' if matchHistory == nil # temporary solution for matches too old to lookup
       matchData << matchHistory # push match data from current iteration into an array
         bar.advance(1)
