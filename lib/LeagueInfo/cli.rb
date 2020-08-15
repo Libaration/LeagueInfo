@@ -92,9 +92,7 @@ class LeagueInfo::CLI
 
   def all_champions
     prompt = TTY::Prompt.new(active_color: :blue)
-    champArray = []
-    #LeagueInfo::Champions.all.each{ |champion| puts "#{champion.name}".blue}
-    LeagueInfo::Champions.all.each{ |champion| champArray << champion.name}
+    champArray = Array.new.tap { |array| LeagueInfo::Champions.all.each { |champion| array << champion.name } }
     champion = prompt.select('What champion are you searching for? (You can type!)', champArray, filter: true)
     attributes(LeagueInfo::Champions.find_by_name(champion))
   end
