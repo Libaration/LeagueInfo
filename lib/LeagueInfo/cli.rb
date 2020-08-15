@@ -3,7 +3,6 @@ require 'tty-prompt'
 require 'pry'
 require 'terminal-table'
 class LeagueInfo::CLI
-  prompt = TTY::Prompt.new
   def splash
     puts "
 
@@ -57,6 +56,11 @@ class LeagueInfo::CLI
     prompt = TTY::Prompt.new(active_color: :blue)
     choices = %w(Key Blurb Tags Stats)
     champattr = prompt.multi_select("Which attributes do you want to find out about?", choices)
+    if champattr.count == 0
+      puts 'Please make a selection!'.red
+      sleep(1)
+      attributes(champion)
+    end
     champattr.each do |attr|
       puts "#{attr}: ".red + champion.send(attr.downcase).join('/').blue if attr == 'Tags'
       puts "#{attr}: ".red + champion.send(attr.downcase).blue unless attr == 'Tags' || attr == 'Stats'
