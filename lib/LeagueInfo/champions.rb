@@ -7,7 +7,8 @@ class LeagueInfo::Champions
   end
 
   def img
-    LeagueInfo::Champimg.load(self.name)
+    doc = LeagueInfo::Getdata.scrapeData("http://www.asciiarts.net/figlet.ajax.php?message=#{self.name}&font=isometric4.flf&html_mode=undefined&facebook_mode=undefined")
+    doc.css("div#image").children[1].text
   end
 
   def self.valid?(id)
