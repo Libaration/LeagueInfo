@@ -35,9 +35,8 @@ class LeagueInfo::Matches
       match.each { |key, value| matchIds << {key => value} if key == :gameId}
       match.each { |key, value| champsPlayed << {key => value} if key == :champion}
     end
-    matchIds.each_with_index do |_ , i| # this loop iterates through each gameId and sets it to the currentGameId
-      currentGameId = matchIds[i].values.join
-      matchHistory = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{currentGameId}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams] # pulls match data depending on current gameId
+    matchIds.each_with_index.collect do |_ , i| # this loop iterates through each gameId and sets it to the currentGameId
+      matchHistory = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{matchIds[i].values.join}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams] # pulls match data depending on current gameId
       return 'No matches!' if matchHistory.nil? # temporary solution for matches too old to lookup
       matchData << matchHistory # push match data from current iteration into an array
         bar.advance(1)
