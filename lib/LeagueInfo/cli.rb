@@ -3,7 +3,6 @@ require 'tty-prompt'
 require 'pry'
 require 'terminal-table'
 class LeagueInfo::CLI
-  prompt = TTY::Prompt.new
   def splash
     puts "
 
@@ -53,17 +52,23 @@ class LeagueInfo::CLI
   end
 
   def attributes(champion)
-    puts "#{champion.img}".light_blue ; puts "                                                   #{champion.title}".light_blue
+    champion.img
     prompt = TTY::Prompt.new(active_color: :blue)
     choices = %w(Key Blurb Tags Stats)
     champattr = prompt.multi_select("Which attributes do you want to find out about?", choices)
+    if champattr.count == 0
+      puts 'Please make a selection!'.red
+      sleep(1)
+      attributes(champion)
+      else
     champattr.each do |attr|
       puts "#{attr}: ".red + champion.send(attr.downcase).join('/').blue if attr == 'Tags'
       puts "#{attr}: ".red + champion.send(attr.downcase).blue unless attr == 'Tags' || attr == 'Stats'
-      rows = []
-      if attr == 'Stats'
-        champion.send(attr.downcase).collect do |k, v,|
-        rows << ["#{k.capitalize}".red, "#{v}".blue]
+      rows = Array.new.tap do |row|
+        if attr == 'Stats'
+          champion.send(attr.downcase).collect do |k, v,| #calls on instance stats variable which is a hash
+            row << ["#{k.capitalize}".red, "#{v}".blue]
+          end
         end
       end
       table = Terminal::Table.new :rows => rows, :headings => ['Stat', 'Value']
@@ -82,13 +87,12 @@ class LeagueInfo::CLI
     when "\r"
       start
     end
+    end
   end
 
   def all_champions
     prompt = TTY::Prompt.new(active_color: :blue)
-    champArray = []
-    #LeagueInfo::Champions.all.each{ |champion| puts "#{champion.name}".blue}
-    LeagueInfo::Champions.all.each{ |champion| champArray << champion.name}
+    champArray = Array.new.tap { |array| LeagueInfo::Champions.all.each { |champion| array << champion.name } }
     champion = prompt.select('What champion are you searching for? (You can type!)', champArray, filter: true)
     attributes(LeagueInfo::Champions.find_by_name(champion))
   end
@@ -99,7 +103,7 @@ class LeagueInfo::CLI
     user = LeagueInfo::Getdata.get_random if user == 'Press Return for Random summoner'
     user = URI.escape user
     unsavedUser = LeagueInfo::Users.get_user(user)
-    ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}
+    ['accountId', 'id', 'name', 'profileIconId', 'puuid', 'summonerLevel', 'rank'].each{|var| print "#{var}: ".capitalize.blue ; puts unsavedUser.send("#{var}")}
     navkey = prompt.keypress("Press S to save this account or press M to not save and go back to the main menu".yellow)
     case navkey
     when 'm'
@@ -141,8 +145,8 @@ class LeagueInfo::CLI
     prompt = TTY::Prompt.new(active_color: :blue)
     LeagueInfo::Matches.get_matches(LeagueInfo::Users.current) if LeagueInfo::Matches.have_matches?(LeagueInfo::Users.current) == false # not the cleanest way to do this
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
-    rows = []
     kdaArray = LeagueInfo::Matches.scrape_kda(LeagueInfo::Users.current.name)
+    rows = []
     matchobjects.each_with_index do |obj, i|
       result = obj.teams[0][0][:win]
       obj.teams[0][0][:win] == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red

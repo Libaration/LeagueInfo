@@ -6,10 +6,6 @@ class LeagueInfo::Users
 
   end
 
-  def current_user(nameArg)
-    @@current = all.detect{|user| user.name == nameArg} #set current user
-  end
-
   def save
     self.class.all << self
   end
@@ -19,17 +15,15 @@ class LeagueInfo::Users
   end
 
   def self.get_user(name)
-    data = LeagueInfo::Getdata.new
-    userdetails = data.get("https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{name}?api_key=#{LeagueInfo::Getdata.APIKEY}")
-    new = self.new
-    new.rank = scrape_rank(name)
-    userdetails.each{ |k,v| new.send("#{k}=", v) }
-    new
+    userdetails = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{name}?api_key=#{LeagueInfo::Getdata.APIKEY}")
+     self.new.tap do |user|
+      user.rank = scrape_rank(name)
+      userdetails.each{ |key,value| user.send("#{key}=", value) }
+    end
   end
 
   def self.scrape_rank(name)
-    url = "https://na.op.gg/summoner/userName=#{name}"
-    doc = Nokogiri::HTML(open(url))
+    doc = LeagueInfo::Getdata.scrapeData("https://na.op.gg/summoner/userName=#{name}")
     doc.css("div.TierRank").text
   end
 

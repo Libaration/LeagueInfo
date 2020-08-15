@@ -7,7 +7,9 @@ class LeagueInfo::Champions
   end
 
   def img
-    LeagueInfo::Champimg.load(self.name)
+    doc = LeagueInfo::Getdata.scrapeData("http://www.asciiarts.net/figlet.ajax.php?message=#{self.name}&font=isometric4.flf&html_mode=undefined&facebook_mode=undefined")
+    image = doc.css("div#image").children[1].text
+    puts "#{image}".light_blue ; puts "                                                   #{self.title}".light_blue
   end
 
   def self.valid?(id)
@@ -19,8 +21,7 @@ class LeagueInfo::Champions
   end
 
   def self.load_champions
-    data = LeagueInfo::Getdata.new
-    champlist = data.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json')[:data]
+    champlist = LeagueInfo::Getdata.get('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json')[:data]
     champlist.each do |_key, value|
       champion = self.new
       value.each_pair { |k, v| champion.send("#{k}=", v)}
@@ -30,11 +31,6 @@ class LeagueInfo::Champions
   def self.find_by_name(name)
     all.detect { |champion| champion.name == name }
   end
-
-  def winratio
-    # stats call
-  end
-
 
   def self.all
     @@all
