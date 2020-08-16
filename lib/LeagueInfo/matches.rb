@@ -2,11 +2,12 @@ require 'pry'
 require 'tty-progressbar'
 class LeagueInfo::Matches
   @@all = []
-  attr_accessor :teams, :owner, :champsPlayed
+  attr_accessor :owner, :champsPlayed, :friendlyResult, :enemyResult, :gameId
 
-  def initialize(matches:, owner:, champsPlayed:)
-    @teams = []
-    @teams << matches
+  def initialize(friendlyResult:, owner:, champsPlayed:, enemyResult:, gameId:)
+    @friendlyResult = friendlyResult
+    @enemyResult = enemyResult
+    @gameId = gameId
     @owner = owner
     @champsPlayed = champsPlayed
     self.class.all << self
@@ -31,15 +32,13 @@ class LeagueInfo::Matches
       match.each { |key, value| matchIds << {key => value} if key == :gameId}
       match.each { |key, value| champsPlayed << {key => value} if key == :champion}
     end
-      teams = [].tap do |team|
-        matchIds.each_with_index do |gameId , i|
-          bar.advance(1)
-          currentGame = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{matchIds[i].values.join}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams]
-          team << [{:teamId => currentGame[0][:teamId], :win => currentGame[0][:win]} , {:teamId => currentGame[1][:teamId], :win => currentGame[1][:win]}, {:gameId => gameId.values.join }]
-        end
+    matchIds.each_with_index do |gameId , i|
+      bar.advance(1)
+      currentGame = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{matchIds[i].values.join}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams]
+      unless all.any? { |obj| obj.gameId == gameId }
+        new(friendlyResult: currentGame[0][:win], enemyResult: currentGame[1][:win], owner: LeagueInfo::Users.current, champsPlayed: champsPlayed, gameId: gameId.values.join)
       end
-
-    teams.each { |game| new(matches: game, owner: LeagueInfo::Users.current, champsPlayed: champsPlayed) unless all.any? { |obj| obj.teams.include? game } }
+    end
   end
 
   def self.all_by_name(owner)
