@@ -4,7 +4,7 @@ class LeagueInfo::Matches
   @@all = []
   attr_accessor :teams, :owner, :champsPlayed
 
-  def initialize(matches,owner, champsPlayed)
+  def initialize(matches:, owner:, champsPlayed:)
     @teams = []
     @teams << matches
     @owner = owner
@@ -31,13 +31,15 @@ class LeagueInfo::Matches
       match.each { |key, value| matchIds << {key => value} if key == :gameId}
       match.each { |key, value| champsPlayed << {key => value} if key == :champion}
     end
-    matchIds.each_with_index.collect do |_ , i| # this loop iterates through each gameId and sets it to the currentGameId
-      matchHistory = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{matchIds[i].values.join}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams] # pulls match data depending on current gameId
-      return 'No matches!' if matchHistory.nil? # temporary solution for matches too old to lookup
-      matchData << matchHistory # push match data from current iteration into an array
-        bar.advance(1)
-    end
-    createMatches(matchData, champsPlayed)
+      teams = [].tap do |team|
+        matchIds.each_with_index do |gameId , i|
+          bar.advance(1)
+          currentGame = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{matchIds[i].values.join}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams]
+          team << [{:teamId => currentGame[0][:teamId], :win => currentGame[0][:win]} , {:teamId => currentGame[1][:teamId], :win => currentGame[1][:win]}, {:gameId => gameId.values.join }]
+        end
+      end
+
+    teams.each { |game| new(matches: game, owner: LeagueInfo::Users.current, champsPlayed: champsPlayed) unless all.any? { |obj| obj.teams.include? game } }
   end
 
   def self.all_by_name(owner)
@@ -48,13 +50,6 @@ class LeagueInfo::Matches
     all.any?{ |obj| obj.owner == owner }
   end
 
-  def self.createMatches(matches, champsPlayed)
-    owner = LeagueInfo::Users.current
-    matches.each_with_index do |game, _| # This gives all games in an array each game containing 2 hashes one for the winning team one for losing team so iterate through each game with index
-      # index is not used here but left as a reminder you use index to go a level deeper into the hash
-      new(game, owner, champsPlayed) unless all.any?{ |obj| obj.teams.include? game }
-    end
-  end
 
   def self.most_played
     champFrequency = {}
