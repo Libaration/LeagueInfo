@@ -23,11 +23,7 @@ class LeagueInfo::Getdata
   end
 
   def self.get_random
-    usersCollected = Array.new.tap do |array|
-      users = scrapeData('https://www.leagueofgraphs.com/rankings/summoners/na').css("span.name")
-      users.each { |name| array << name.text}
-    end
-    usersCollected.sample
+    scrapeData('https://www.leagueofgraphs.com/rankings/summoners/na').css("span.name").collect { |name| name.text }.sample
   end
 
   def self.scrape_kda(name)
