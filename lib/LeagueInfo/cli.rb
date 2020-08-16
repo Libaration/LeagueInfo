@@ -147,17 +147,16 @@ class LeagueInfo::CLI
     matchobjects = LeagueInfo::Matches.all_by_name(LeagueInfo::Users.current)
     kdaArray = LeagueInfo::Getdata.scrape_kda(LeagueInfo::Users.current.name)
     rows = []
-    matchobjects.each_with_index do |obj, i|
-      obj.friendlyResult == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
-      if LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]) == nil
+    matchobjects.each_with_index do |match, i|
+      match.friendlyResult == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
+      if LeagueInfo::Champions.find_by_id(match.champsPlayed.to_s) == nil
         championname = 'Not in database'
       else
-        championname = LeagueInfo::Champions.find_by_id(obj.champsPlayed[i]).name
+        championname = LeagueInfo::Champions.find_by_id(match.champsPlayed.to_s).name
       end
-
-      rows << [obj.friendlyResult == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{kdaArray[i][0]}".green + " / " + "#{kdaArray[i][1]}".red + " / " + "#{kdaArray[i][2]}"]
+      rows << [match.friendlyResult == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{kdaArray[i][0]}".green + " / " + "#{kdaArray[i][1]}".red + " / " + "#{kdaArray[i][2]}"]
       totalGames += 1
-      wonGames += 1 if obj.friendlyResult == 'Win'
+      wonGames += 1 if match.friendlyResult == 'Win'
     end
     table = Terminal::Table.new :rows => rows, :headings => ['Champion'.blue, 'Result'.blue, 'K / D / A'.blue]
     table.style = {:width => 80, :padding_left => 3, :border_x => "=".blue, :border_i => "x", :all_separators => false}
