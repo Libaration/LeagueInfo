@@ -13,11 +13,7 @@ class LeagueInfo::Matches
   end
 
   def champsPlayed
-    champsPlayedArray = [].tap do |array|
-      @champsPlayed.each do |champid|
-        array << champid.values.first.to_s
-      end
-    end
+      @champsPlayed.collect { |champid| champid.values.first.to_s }
   end
 
   def self.all
