@@ -34,10 +34,8 @@ class LeagueInfo::Getdata
     puts ' Scraping external data'.green
     name = URI.escape name
     doc = LeagueInfo::Getdata.scrapeData("https://na.op.gg/summoner/userName=#{name}")
-    kdaArray = Array.new.tap do |array|
-      doc.css('div.GameItemWrap').each do |row|
-        array << [row.css('span.Kill').text.gsub(/[a-z\s]|[A-Z\s]/, ''), row.css('span.Death').text.gsub(/[a-z\s]|[A-Z\s]/, ''), row.css('span.Assist').text.gsub(/[a-z\s]|[A-Z\s]/, '')]
+      doc.css('div.GameItemWrap').collect do |row|
+        [row.css('span.Kill').text.gsub(/[a-z\s]|[A-Z\s]/, ''), row.css('span.Death').text.gsub(/[a-z\s]|[A-Z\s]/, ''), row.css('span.Assist').text.gsub(/[a-z\s]|[A-Z\s]/, '')]
       end
-    end
   end
 end
