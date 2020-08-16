@@ -149,10 +149,10 @@ class LeagueInfo::CLI
     rows = []
     matchobjects.each_with_index do |match, i|
       match.friendlyResult == 'Win' ? outcome = 'WIN'.green + ' / LOSE' : outcome = 'WIN / ' + 'LOSE'.red
-      if LeagueInfo::Champions.find_by_id(match.champsPlayed.to_s) == nil
+      if LeagueInfo::Champions.find_by_id(match.champPlayed.to_s) == nil
         championname = 'Not in database'
       else
-        championname = LeagueInfo::Champions.find_by_id(match.champsPlayed.to_s).name
+        championname = LeagueInfo::Champions.find_by_id(match.champPlayed.to_s).name
       end
       rows << [match.friendlyResult == 'Win' ? "#{championname}".green : "#{championname}".red, "#{outcome}", "#{kdaArray[i][0]}".green + " / " + "#{kdaArray[i][1]}".red + " / " + "#{kdaArray[i][2]}"]
       totalGames += 1

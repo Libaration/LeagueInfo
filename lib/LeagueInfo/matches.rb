@@ -2,14 +2,14 @@ require 'pry'
 require 'tty-progressbar'
 class LeagueInfo::Matches
   @@all = []
-  attr_accessor :owner, :champsPlayed, :friendlyResult, :enemyResult, :gameId
+  attr_accessor :owner, :champPlayed, :friendlyResult, :enemyResult, :gameId
 
-  def initialize(friendlyResult:, owner:, champsPlayed:, enemyResult:, gameId:)
+  def initialize(friendlyResult:, owner:, champPlayed:, enemyResult:, gameId:)
     @friendlyResult = friendlyResult
     @enemyResult = enemyResult
     @gameId = gameId
     @owner = owner
-    @champsPlayed = champsPlayed
+    @champPlayed = champPlayed
     self.class.all << self
   end
 
@@ -25,7 +25,7 @@ class LeagueInfo::Matches
       bar.advance(1)
       currentGame = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{match[:gameId]}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams]
       unless all.any? { |obj| obj.gameId == match[:gameId] }
-        new(friendlyResult: currentGame[0][:win], enemyResult: currentGame[1][:win], owner: LeagueInfo::Users.current, champsPlayed: match[:champion], gameId: match[:gameId])
+        new(friendlyResult: currentGame[0][:win], enemyResult: currentGame[1][:win], owner: LeagueInfo::Users.current, champPlayed: match[:champion], gameId: match[:gameId])
       end
     end
   end
@@ -41,7 +41,7 @@ class LeagueInfo::Matches
 
   def self.most_played
     champsArray = all_by_name(LeagueInfo::Users.current).collect do |match|
-      match.champsPlayed.to_s
+      match.champPlayed.to_s
     end
     champFrequency = {}.tap do |hash|
       champsArray.collect {|champid| hash[champid.to_sym] = champsArray.count(champid) }
