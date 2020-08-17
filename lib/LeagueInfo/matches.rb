@@ -23,9 +23,16 @@ class LeagueInfo::Matches
     bar = TTY::ProgressBar.new(' [:bar]'.green , total: matchesjson.count, width: 77) # total is the count of matches progress is advanced inside loop below by each iteration
     matchesjson.each do |match|
       bar.advance(1)
-      currentGame = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{match[:gameId]}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams]
+      gamejson = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{match[:gameId]}?api_key=#{LeagueInfo::Getdata.APIKEY}")
+      currentGame = gamejson[:teams]
       unless all.any? { |obj| obj.gameId == match[:gameId] }
-        new(friendlyResult: currentGame[0][:win], enemyResult: currentGame[1][:win], owner: LeagueInfo::Users.current, champPlayed: match[:champion], gameId: match[:gameId])
+        newgame = new(friendlyResult: currentGame[0][:win], enemyResult: currentGame[1][:win], owner: LeagueInfo::Users.current, champPlayed: match[:champion], gameId: match[:gameId])
+          gamejson[:participants].each do |person|
+          participantId = person[:participantId]
+          teamId = person[:teamId]
+          championId = person[:championId]
+          LeagueInfo::Friends.new(participantId: participantId, teamId: teamId, championId: championId, match: newgame)
+        end
       end
     end
   end
