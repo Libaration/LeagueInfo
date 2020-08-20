@@ -34,4 +34,20 @@ class LeagueInfo::Getdata
         [row.css('span.Kill').text.gsub(/[a-z\s]|[A-Z\s]/, ''), row.css('span.Death').text.gsub(/[a-z\s]|[A-Z\s]/, ''), row.css('span.Assist').text.gsub(/[a-z\s]|[A-Z\s]/, '')]
       end
   end
+
+  def self.get_matches(name)
+    get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{APIKEY}")[:matches]
+  end
+
+  def self.get_match_data(gameId)
+    get("https://na1.api.riotgames.com/lol/match/v4/matches/#{gameId}?api_key=#{APIKEY}")[:teams]
+  end
+
+  def self.get_user(name)
+    get("https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{name}?api_key=#{APIKEY}")
+  end
+
+  def self.get_champions
+    get('http://ddragon.leagueoflegends.com/cdn/10.16.1/data/en_US/champion.json')[:data]
+  end
 end

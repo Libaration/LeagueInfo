@@ -21,7 +21,7 @@ class LeagueInfo::Champions
   end
 
   def self.load_champions
-    champlist = LeagueInfo::Getdata.get('http://ddragon.leagueoflegends.com/cdn/10.16.1/data/en_US/champion.json')[:data]
+    champlist = LeagueInfo::Getdata.get_champions
     champlist.each do |_key, value|
       champion = self.new
       value.each_pair { |k, v| champion.send("#{k}=", v)}

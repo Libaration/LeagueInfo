@@ -18,12 +18,12 @@ class LeagueInfo::Matches
   end
 
   def self.get_matches(name)
-    matchesjson = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/#{name.accountId}?endIndex=10&api_key=#{LeagueInfo::Getdata.APIKEY}")[:matches]
+    matchesjson = LeagueInfo::Getdata.get_matches(name)
     puts ' Iterating through match data: '.green
     bar = TTY::ProgressBar.new(' [:bar]'.green , total: matchesjson.count, width: 77) # total is the count of matches progress is advanced inside loop below by each iteration
     matchesjson.each do |match|
       bar.advance(1)
-      currentGame = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/match/v4/matches/#{match[:gameId]}?api_key=#{LeagueInfo::Getdata.APIKEY}")[:teams]
+      currentGame = LeagueInfo::Getdata.get_match_data(match[:gameId])
       unless all.any? { |obj| obj.gameId == match[:gameId] }
         new(friendlyResult: currentGame[0][:win], enemyResult: currentGame[1][:win], owner: LeagueInfo::Users.current, champPlayed: match[:champion], gameId: match[:gameId])
       end

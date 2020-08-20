@@ -15,7 +15,7 @@ class LeagueInfo::Users
   end
 
   def self.get_user(name)
-    userdetails = LeagueInfo::Getdata.get("https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/#{name}?api_key=#{LeagueInfo::Getdata.APIKEY}")
+    userdetails = LeagueInfo::Getdata.get_user(name)
      self.new.tap do |user|
       user.rank = scrape_rank(name)
       userdetails.each{ |key,value| user.send("#{key}=", value) }
