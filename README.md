@@ -5,9 +5,15 @@ Scrapes from OP.GG for K/D/A
 
 # Screenshots
 #### Selecting a champion
-![screenshot1](https://i.gyazo.com/7ec4fdce912bb089407a453fe5d15fbb.mp4http://)
+
+https://user-images.githubusercontent.com/11550216/120419624-cc65c400-c330-11eb-8f98-f148a2f69d97.mp4
+
+
 #### Displaying match information
-![screenshot2](https://i.gyazo.com/1851aae5fb8bf2a0cd397cefcc48ed3f.mp4http://)
+
+https://user-images.githubusercontent.com/11550216/120419630-ce2f8780-c330-11eb-9cc1-d8553d6431af.mp4
+
+
 
 ## API Access
 #### Must make a .env file in root folder and save your API key to make requests!
